@@ -230,13 +230,9 @@ function buildDataTable() {
     }
 }
 
-function saveAndChart() {
+function gatherData() {
     const projectRaw = localStorage.getItem('project');
-    if (!projectRaw) {
-        alert('No project found');
-        window.location.href = 'builder.html';
-        return;
-    }
+    if (!projectRaw) return null;
     const project = JSON.parse(projectRaw);
 
     const epitopes = project.epitopes.map(e => e.name);
@@ -244,14 +240,12 @@ function saveAndChart() {
     const secondary = project.secondary || [];
 
     if (secondary.length === 0) {
-        // Flat structure
         const out = {};
         epitopes.forEach((ep, eIdx) => {
             out[ep] = [];
             for (let t = 0; t < timepoints.length; t++) {
                 const presenceEl = document.getElementById(`chk_e${eIdx}_t${t}`);
                 const partialEl = document.getElementById(`partial_e${eIdx}_t${t}`);
-                
                 let value = 0;
                 if (presenceEl && presenceEl.checked) {
                     value = (partialEl && partialEl.checked) ? 1 : 2;
@@ -259,9 +253,8 @@ function saveAndChart() {
                 out[ep].push(value);
             }
         });
-        localStorage.setItem('data', JSON.stringify(out));
+        return out;
     } else {
-        // Nested structure
         const out = {};
         secondary.forEach((donor, dIdx) => {
             out[donor.name] = {};
@@ -270,7 +263,6 @@ function saveAndChart() {
                 for (let t = 0; t < timepoints.length; t++) {
                     const presenceEl = document.getElementById(`chk_e${eIdx}_d${dIdx}_t${t}`);
                     const partialEl = document.getElementById(`partial_e${eIdx}_d${dIdx}_t${t}`);
-                    
                     let value = 0;
                     if (presenceEl && presenceEl.checked) {
                         value = (partialEl && partialEl.checked) ? 1 : 2;
@@ -279,8 +271,42 @@ function saveAndChart() {
                 }
             });
         });
-        localStorage.setItem('data', JSON.stringify(out));
+        return out;
     }
+}
+
+function saveToProject() {
+    const projectRaw = localStorage.getItem('project');
+    if (!projectRaw) { alert('No project found — go back to Setup first'); return; }
+    const project = JSON.parse(projectRaw);
+
+    const out = gatherData();
+    if (!out) return;
+    localStorage.setItem('data', JSON.stringify(out));
+
+    if (project.name) {
+        const projects = JSON.parse(localStorage.getItem('dotplot_projects_v1') || '{}');
+        if (projects[project.name]) {
+            projects[project.name].data = out;
+            projects[project.name].modified = new Date().toISOString();
+            localStorage.setItem('dotplot_projects_v1', JSON.stringify(projects));
+        }
+    }
+
+    alert('Data saved!');
+}
+
+function saveAndChart() {
+    const projectRaw = localStorage.getItem('project');
+    if (!projectRaw) {
+        alert('No project found');
+        window.location.href = 'builder.html';
+        return;
+    }
+
+    const out = gatherData();
+    if (!out) return;
+    localStorage.setItem('data', JSON.stringify(out));
 
     window.location.href = 'chart.html';
 }
