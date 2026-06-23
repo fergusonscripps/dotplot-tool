@@ -405,3 +405,24 @@ function downloadTIFF() { html2canvas(document.getElementById('chart'), { scale:
 
 function goBack() { window.location.href = 'data.html'; }
 function goHome() { window.location.href = 'builder.html'; }
+
+// ── On load: set dynamic h1, hide inapplicable donor controls ───────
+document.addEventListener('DOMContentLoaded', () => {
+    if (project && project.chartTitle) {
+        const h1 = document.querySelector('h1');
+        if (h1) h1.textContent = project.chartTitle;
+    }
+
+    if (secondary.length === 0) {
+        const donorIds = [
+            'xGroupGapSlider', 'xBottomLabelYSlider', 'xBottomLabelRotationSlider',
+            'secondaryLabelXSlider', 'secondaryLabelYSlider',
+            'donorLineYSlider', 'donorLineWidthSlider', 'donorLineExtendSlider',
+            'donorUShapeToggle', 'donorUCapHeightSlider'
+        ];
+        donorIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.closest('.control-group').style.display = 'none';
+        });
+    }
+});

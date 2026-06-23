@@ -59,11 +59,19 @@ function populateFormFromProject(project) {
     });
 }
 
+function setActiveProjectLabel(name) {
+    const el = document.getElementById('activeProjectLabel');
+    if (!el) return;
+    el.textContent = name ? `Active project: ${name}` : '';
+    el.style.display = name ? 'block' : 'none';
+}
+
 function loadSavedData() {
     const saved = localStorage.getItem('project');
     if (saved) {
         const project = JSON.parse(saved);
         populateFormFromProject(project);
+        setActiveProjectLabel(project.name || '');
     } else {
         generateEpitopes();
         generateTimepoints();
@@ -252,25 +260,30 @@ function goToData() {
     const project = gatherProjectFromForm();
     localStorage.setItem('project', JSON.stringify(project));
 
-    const existingData = localStorage.getItem('data');
-    if (!existingData) {
-        if (project.secondary && project.secondary.length > 0) {
-            const data = {};
-            project.secondary.forEach(sec => {
-                data[sec.name] = {};
-                project.epitopes.forEach(ep => {
-                    data[sec.name][ep.name] = project.timepoints.map(_ => 0);
-                });
-            });
-            localStorage.setItem('data', JSON.stringify(data));
-        } else {
-            const data = {};
+    // Always rebuild skeleton so structure matches current project,
+    // carrying forward any values where epitope/timepoint/donor names still match.
+    const oldRaw = localStorage.getItem('data');
+    const oldData = oldRaw ? (() => { try { return JSON.parse(oldRaw); } catch(e) { return {}; } })() : {};
+
+    let newData;
+    if (project.secondary && project.secondary.length > 0) {
+        newData = {};
+        project.secondary.forEach(sec => {
+            const oldDonor = oldData[sec.name] || {};
+            newData[sec.name] = {};
             project.epitopes.forEach(ep => {
-                data[ep.name] = project.timepoints.map(_ => 0);
+                const oldVals = oldDonor[ep.name] || [];
+                newData[sec.name][ep.name] = project.timepoints.map((_, i) => oldVals[i] || 0);
             });
-            localStorage.setItem('data', JSON.stringify(data));
-        }
+        });
+    } else {
+        newData = {};
+        project.epitopes.forEach(ep => {
+            const oldVals = Array.isArray(oldData[ep.name]) ? oldData[ep.name] : [];
+            newData[ep.name] = project.timepoints.map((_, i) => oldVals[i] || 0);
+        });
     }
+    localStorage.setItem('data', JSON.stringify(newData));
     window.location.href = 'data.html';
 }
 
@@ -292,6 +305,7 @@ function saveProject() {
     setProjects(projects);
     localStorage.setItem('project', JSON.stringify(project));
 
+    setActiveProjectLabel(projectName);
     displaySavedProjects();
     alert(`Project "${projectName}" saved!`);
 }
@@ -308,6 +322,7 @@ function loadProject(projectName) {
     if (entry.data) {
         localStorage.setItem('data', JSON.stringify(entry.data));
     }
+    setActiveProjectLabel(projectName);
     alert(`Project "${projectName}" loaded!`);
 }
 
@@ -350,6 +365,8 @@ function exportProject() {
 
     const project = gatherProjectFromForm();
     project.name = projectName;
+    // Flush active session so export and saved copy are always in sync
+    localStorage.setItem('project', JSON.stringify(project));
 
     const currentData = localStorage.getItem('data');
     const exportData = {

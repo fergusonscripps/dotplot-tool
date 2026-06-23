@@ -286,11 +286,10 @@ function saveToProject() {
 
     if (project.name) {
         const projects = JSON.parse(localStorage.getItem('dotplot_projects_v1') || '{}');
-        if (projects[project.name]) {
-            projects[project.name].data = out;
-            projects[project.name].modified = new Date().toISOString();
-            localStorage.setItem('dotplot_projects_v1', JSON.stringify(projects));
-        }
+        if (!projects[project.name]) projects[project.name] = { project };
+        projects[project.name].data = out;
+        projects[project.name].modified = new Date().toISOString();
+        localStorage.setItem('dotplot_projects_v1', JSON.stringify(projects));
     }
 
     alert('Data saved!');
@@ -312,7 +311,7 @@ function saveAndChart() {
 }
 
 function goBack() {
-    window.location.href = '/builder';
+    window.location.href = 'builder.html';
 }
 
 window.addEventListener('DOMContentLoaded', buildDataTable);

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>dot.plot ᘛ⁐̤ᕐᐷ — Builder</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
@@ -86,6 +87,7 @@
             display: flex;
             gap: 8px;
             align-items: flex-end;
+            flex-wrap: wrap;
         }
 
         .textbox {
@@ -154,12 +156,16 @@
 </head>
 <body>
     <nav class="site-nav">
-        <span class="site-nav-home">dot.plot ᘛ⁐̤ᕐᐷ</span>
+        <a href="builder.html" class="site-nav-home">dot.plot ᘛ⁐̤ᕐᐷ</a>
+        <span style="color:rgba(255,255,255,0.45);font-size:11px;font-family:var(--font-mono);">Step 1 of 3 — Setup</span>
     </nav>
 
     <div style="padding: 24px;">
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-            <h1 style="margin:0;">dot.plot ᘛ⁐̤ᕐᐷ Setup</h1>
+            <div>
+                <h1 style="margin:0;">dot.plot ᘛ⁐̤ᕐᐷ Setup</h1>
+                <div id="activeProjectLabel" style="display:none;margin-top:4px;font-size:13px;color:var(--accent);font-family:var(--font-mono);font-weight:600;"></div>
+            </div>
         </div>
 
         <div class="section">
@@ -198,13 +204,13 @@
                 <label for="epitopes">How many epitopes?</label>
                 <input type="number" id="epitopes" min="1" value="1">
                 <div style="display: flex; gap: 8px;">
-                    <button onclick="generateEpitopes()" class="primary small" style="width: auto;">Generate</button>
+                    <button onclick="generateEpitopes()" class="primary small" style="width: auto;">Reset List</button>
                     <button onclick="addEpitope()" class="secondary small" style="width: auto;">Add One</button>
-                    <button onclick="subtractEpitope()" class="secondary small" style="width: auto;">Subtract One</button>
+                    <button onclick="subtractEpitope()" class="secondary small" style="width: auto;">Remove Last</button>
                 </div>
             </div>
             <div id="epitopeBoxes" class="textbox-container"></div>
-            <div class="helper-text">Pick a color via the hex field, the color picker, or click a palette swatch.</div>
+            <div class="helper-text">Pick a color via the hex field, the color picker, or click a palette swatch. <strong>Reset List</strong> will clear all names.</div>
         </div>
 
         <div class="section">
@@ -213,9 +219,9 @@
                 <label for="timepoints">How many timepoints?</label>
                 <input type="number" id="timepoints" min="1" value="1">
                 <div style="display: flex; gap: 8px;">
-                    <button onclick="generateTimepoints()" class="primary small" style="width: auto;">Generate</button>
+                    <button onclick="generateTimepoints()" class="primary small" style="width: auto;">Reset List</button>
                     <button onclick="addTimepoint()" class="secondary small" style="width: auto;">Add One</button>
-                    <button onclick="subtractTimepoint()" class="secondary small" style="width: auto;">Subtract One</button>
+                    <button onclick="subtractTimepoint()" class="secondary small" style="width: auto;">Remove Last</button>
                 </div>
             </div>
             <div id="timepointBoxes" class="textbox-container"></div>
@@ -250,7 +256,7 @@
         </div>
 
         <div class="button-group">
-            <button onclick="goToData()" class="primary">Continue to Data Entry</button>
+            <button onclick="goToData()" style="background:var(--accent);color:#fff;padding:12px 28px;font-size:15px;border:none;border-radius:6px;cursor:pointer;font-weight:600;transition:background 0.2s;" onmouseover="this.style.background='var(--accent-dark)'" onmouseout="this.style.background='var(--accent)'">Continue to Data Entry →</button>
         </div>
     </div>
 
