@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dot.plot ᘛ⁐̤ᕐᐷ — Chart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <nav class="site-nav">
+        <a href="builder.html" class="site-nav-home">dot.plot ᘛ⁐̤ᕐᐷ</a>
+    </nav>
+
+    <div style="padding: 24px;">
+        <h1>Epitope Response Over Time</h1>
+        <div class="info-box"><strong>Note:</strong> Plotly viewer is interactive — zoom/pan/select. Download the chart as it appears using SVG, PNG, or TIFF formats.</div>
+
+        <div class="controls-panel">
+
+            <div class="control-group">
+                <label for="axisTickThicknessSlider">Axis &amp; Tick Thickness</label>
+                <input type="range" id="axisTickThicknessSlider" min="1" max="8" step="0.25" value="2"
+                    oninput="updateAxisTickThickness(this.value)">
+                <div class="control-value">Thickness: <span id="axisTickThicknessValue">2</span>px</div>
+            </div>
+
+            <div class="control-group">
+                <label for="yLabelSlider">Move Y-Axis Label (Left/Right)</label>
+                <input type="range" id="yLabelSlider" min="-0.5" max="0.5" step="0.01" value="-0.12"
+                    oninput="updateYLabelPosition(this.value)">
+                <div class="control-value">Position: <span id="yLabelPositionValue">-0.12</span></div>
+            </div>
+
+            <div class="control-group">
+                <label for="ySpacingSlider">Y-Axis Row Spacing</label>
+                <input type="range" id="ySpacingSlider" min="-3" max="5" step="0.1" value="1"
+                    oninput="updateYSpacing(this.value)">
+                <div class="control-value">Spacing: <span id="ySpacingValue">1</span></div>
+            </div>
+
+            <div class="control-group">
+                <label for="xSpacingSlider">X-Axis Column Spacing</label>
+                <input type="range" id="xSpacingSlider" min="0.1" max="3" step="0.1" value="1"
+                    oninput="updateXSpacing(this.value)">
+                <div class="control-value">Spacing: <span id="xSpacingValue">1</span></div>
+            </div>
+
+            <div class="control-group">
+                <label for="xGroupGapSlider">X-Axis Group Gap (Between Donors)</label>
+                <input type="range" id="xGroupGapSlider" min="-2" max="10" step="0.1" value="0"
+                    oninput="updateXGroupGap(this.value)">
+                <div class="control-value">Gap: <span id="xGroupGapValue">0</span> columns</div>
+            </div>
+
+            <div class="control-group">
+                <label for="xTopLabelYSlider">Top X-Label Position (Vertical)</label>
+                <input type="range" id="xTopLabelYSlider" min="-0.5" max="0.5" step="0.01" value="-0.02"
+                    oninput="updateXTopLabelY(this.value)">
+                <div class="control-value">Y: <span id="xTopLabelYValue">-0.02</span></div>
+            </div>
+
+            <div class="control-group">
+                <label for="xBottomLabelYSlider">Bottom X-Label Position (Vertical)</label>
+                <input type="range" id="xBottomLabelYSlider" min="-2" max="-0.05" step="0.01" value="-0.15"
+                    oninput="updateXBottomLabelY(this.value)">
+                <div class="control-value">Y: <span id="xBottomLabelYValue">-0.15</span></div>
+            </div>
+
+            <div class="control-group">
+                <label for="xAxisTitleXSlider">X-Axis Title Position (Horizontal)</label>
+                <input type="range" id="xAxisTitleXSlider" min="-0.3" max="0.05" step="0.01" value="-0.12"
+                    oninput="updateXAxisTitleX(this.value)">
+                <div class="control-value">X: <span id="xAxisTitleXValue">-0.12</span></div>
+            </div>
+
+            <div class="control-group">
+                <label for="xAxisTitleYSlider">X-Axis Title Position (Vertical)</label>
+                <input type="range" id="xAxisTitleYSlider" min="-3" max="1" step="0.01" value="-0.06"
+                    oninput="updateXAxisTitleY(this.value)">
+                <div class="control-value">Y: <span id="xAxisTitleYValue">-0.06</span></div>
+            </div>
+
+            <div class="control-group">
+                <label for="secondaryLabelXSlider">Secondary X-Label Position (Horizontal)</label>
+                <input type="range" id="secondaryLabelXSlider" min="-0.3" max="0.05" step="0.01" value="-0.20"
+                    oninput="updateSecondaryLabelX(this.value)">
+                <div class="control-value">X: <span id="secondaryLabelXValue">-0.20</span></div>
+            </div>
+
+            <div class="control-group">
+                <label for="secondaryLabelYSlider">Secondary X-Label Position (Vertical)</label>
+                <input type="range" id="secondaryLabelYSlider" min="-0.2" max="0.05" step="0.01" value="-0.06"
+                    oninput="updateSecondaryLabelY(this.value)">
+                <div class="control-value">Y: <span id="secondaryLabelYValue">-0.06</span></div>
+            </div>
+
+            <div class="control-group">
+                <label for="donorLineYSlider">Donor Line Position (Vertical)</label>
+                <input type="range" id="donorLineYSlider" min="-5" max="1" step="0.01" value="-0.06"
+                    oninput="updateDonorLineY(this.value)">
+                <div class="control-value">Y: <span id="donorLineYValue">-0.06</span></div>
+            </div>
+
+            <div class="control-group">
+                <label for="donorLineWidthSlider">Donor Line Thickness</label>
+                <input type="range" id="donorLineWidthSlider" min="0" max="15" step="0.25" value="6"
+                    oninput="updateDonorLineWidth(this.value)">
+                <div class="control-value">Width: <span id="donorLineWidthValue">6</span>px</div>
+            </div>
+
+            <div class="control-group">
+                <label for="donorLineExtendSlider">Donor Line Length (extend / reduce)</label>
+                <input type="range" id="donorLineExtendSlider" min="-1" max="3" step="0.1" value="0.5"
+                    oninput="updateDonorLineExtend(this.value)">
+                <div class="control-value">Extend: <span id="donorLineExtendValue">0.5</span> columns</div>
+            </div>
+
+            <div class="control-group">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                    <input type="checkbox" id="donorUShapeToggle" onchange="toggleDonorUShape(this.checked)">
+                    Rounded U-Shape End Caps
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label for="donorUCapHeightSlider">U-Cap Height</label>
+                <input type="range" id="donorUCapHeightSlider" min="0.005" max="0.3" step="0.005" value="0.015"
+                    oninput="updateDonorUCapHeight(this.value)">
+                <div class="control-value">Height: <span id="donorUCapHeightValue">0.015</span></div>
+            </div>
+
+            <div class="control-group">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                    <input type="checkbox" id="kebabLinesToggle" checked onchange="toggleKebabLines(this.checked)">
+                    Show Kebab Lines (vertical grid)
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label for="kebabWidthSlider">Kebab Line Width</label>
+                <input type="range" id="kebabWidthSlider" min="0.1" max="4" step="0.1" value="1"
+                    oninput="updateKebabWidth(this.value)">
+                <div class="control-value">Width: <span id="kebabWidthValue">1</span>px</div>
+            </div>
+
+            <div class="control-group">
+                <label>Kebab Line Color</label>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input type="color" id="kebabColorPicker" value="#000000" oninput="updateKebabColor(this.value)">
+                    <input type="text" id="kebabColorHex" value="#000000"
+                        style="width:90px;padding:4px 8px;font-size:13px;border:1px solid #ddd;border-radius:4px;"
+                        oninput="updateKebabColor(this.value)">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="kebabDashSlider">Kebab Dash Spacing</label>
+                <input type="range" id="kebabDashSlider" min="0.1" max="20" step="1" value="3"
+                    oninput="updateKebabDashSpacing(this.value)">
+                <div class="control-value">Pattern: <span id="kebabDashValue">5,5</span></div>
+            </div>
+
+            <div class="control-group">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                    <input type="checkbox" id="hollowHalvesToggle" onchange="toggleHollowHalves(this.checked)">
+                    Hollow Partial Dots (donut style)
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                    <input type="checkbox" id="blackOutlinesToggle" onchange="toggleBlackOutlines(this.checked)">
+                    Black Dot Outlines
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label for="leftMarginSlider">Left Margin Space</label>
+                <input type="range" id="leftMarginSlider" min="100" max="4000" step="10" value="300"
+                    oninput="updateLeftMargin(this.value)">
+                <div class="control-value">Margin: <span id="leftMarginValue">300</span>px</div>
+            </div>
+
+            <div class="control-group">
+                <label for="xTopLabelRotationSlider">Top X-Labels Rotation (Timepoints)</label>
+                <input type="range" id="xTopLabelRotationSlider" min="-90" max="90" step="1" value="0"
+                    oninput="updateXTopLabelRotation(this.value)">
+                <div class="control-value">Angle: <span id="xTopLabelRotationValue">0</span>°</div>
+            </div>
+
+            <div class="control-group">
+                <label for="xBottomLabelRotationSlider">Bottom X-Labels Rotation (Donors/Antigens)</label>
+                <input type="range" id="xBottomLabelRotationSlider" min="-90" max="90" step="1" value="0"
+                    oninput="updateXBottomLabelRotation(this.value)">
+                <div class="control-value">Angle: <span id="xBottomLabelRotationValue">0</span>°</div>
+            </div>
+
+            <div class="control-group">
+                <label for="xAxisTitleRotationSlider">X-Axis Title Rotation</label>
+                <input type="range" id="xAxisTitleRotationSlider" min="-90" max="90" step="1" value="0"
+                    oninput="updateXAxisTitleRotation(this.value)">
+                <div class="control-value">Angle: <span id="xAxisTitleRotationValue">0</span>°</div>
+            </div>
+
+        </div>
+
+        <div id="chart"></div>
+
+        <div class="controls">
+            <button onclick="saveChartSettings()" class="primary">Save Chart Settings</button>
+            <button onclick="downloadSVG()">Download SVG (Illustrator)</button>
+            <button onclick="downloadPNG()">Download PNG (High Res)</button>
+            <button onclick="downloadTIFF()">Download TIFF</button>
+            <button onclick="goBack()" class="back-button">Back to Data Entry</button>
+            <button onclick="goHome()">Start Over</button>
+        </div>
+    </div>
+
+    <script src="js/chart.js"></script>
+</body>
+</html>

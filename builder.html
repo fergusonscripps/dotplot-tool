@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dot.plot ᘛ⁐̤ᕐᐷ — Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .input-group {
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button.primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        button.primary:hover { background-color: #45a049; }
+
+        button.secondary {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        button.secondary:hover { background-color: #0b7dda; }
+
+        button.small {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .textbox-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .epitope-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: fit-content;
+        }
+
+        .epitope-inputs {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .textbox {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .palette {
+            display: flex;
+            gap: 4px;
+        }
+
+        .swatch {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            border: 2px solid #999;
+            transition: transform 0.2s;
+        }
+
+        .swatch:hover {
+            transform: scale(1.1);
+            border-color: #333;
+        }
+
+        .textbox-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .helper-text {
+            margin-top: 8px;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .button-group button {
+            padding: 12px 24px;
+            font-size: 15px;
+        }
+
+        h1 { color: #333; margin-bottom: 20px; }
+
+        input[type="checkbox"] {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav">
+        <span class="site-nav-home">dot.plot ᘛ⁐̤ᕐᐷ</span>
+    </nav>
+
+    <div style="padding: 24px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+            <h1 style="margin:0;">dot.plot ᘛ⁐̤ᕐᐷ Setup</h1>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Chart Settings</div>
+            <div class="input-group">
+                <label for="chartTitle">Chart Title</label>
+                <input type="text" id="chartTitle" placeholder="e.g. Epitope Response Over Time" value="">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Axis Labels</div>
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="showYLabel" checked> Y-axis label
+                </label>
+                <input type="text" id="yLabel" placeholder="Leave blank for no label" value="">
+            </div>
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="showXLabel" checked> X-axis label (Top line)
+                </label>
+                <input type="text" id="xLabel" placeholder="Days Post Vaccination" value="Days Post Vaccination">
+            </div>
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="showSecondaryLabel"> Secondary bottom line label
+                </label>
+                <input type="text" id="secondaryLabel" placeholder="e.g. Donor, Antigen, Source" value="">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Epitopes (Y-axis)</div>
+            <div class="input-group">
+                <label for="epitopes">How many epitopes?</label>
+                <input type="number" id="epitopes" min="1" value="1">
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="generateEpitopes()" class="primary small" style="width: auto;">Generate</button>
+                    <button onclick="addEpitope()" class="secondary small" style="width: auto;">Add One</button>
+                    <button onclick="subtractEpitope()" class="secondary small" style="width: auto;">Subtract One</button>
+                </div>
+            </div>
+            <div id="epitopeBoxes" class="textbox-container"></div>
+            <div class="helper-text">Pick a color via the hex field, the color picker, or click a palette swatch.</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Timepoints (X-axis - Top Line)</div>
+            <div class="input-group">
+                <label for="timepoints">How many timepoints?</label>
+                <input type="number" id="timepoints" min="1" value="1">
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="generateTimepoints()" class="primary small" style="width: auto;">Generate</button>
+                    <button onclick="addTimepoint()" class="secondary small" style="width: auto;">Add One</button>
+                    <button onclick="subtractTimepoint()" class="secondary small" style="width: auto;">Subtract One</button>
+                </div>
+            </div>
+            <div id="timepointBoxes" class="textbox-container"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Donors / Antigens (X-axis - Bottom Line)</div>
+            <div class="input-group">
+                <label for="secondaryCount">How many donors/antigens?</label>
+                <input type="number" id="secondaryCount" min="0" value="0">
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="generateSecondary()" class="primary small" style="width: auto;">Generate</button>
+                    <button onclick="addSecondary()" class="secondary small" style="width: auto;">Add One</button>
+                    <button onclick="subtractSecondary()" class="secondary small" style="width: auto;">Subtract One</button>
+                </div>
+            </div>
+            <div id="secondaryBoxes" class="textbox-container"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Project Management</div>
+            <div class="input-group">
+                <label for="projectName">Project Name (for saving)</label>
+                <input type="text" id="projectName" placeholder="My Epitope Project" value="">
+            </div>
+            <div style="display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap;">
+                <button onclick="saveProject()" class="primary small" style="width: auto;">Save Project</button>
+                <button onclick="exportProject()" class="secondary small" style="width: auto;">Export to File</button>
+                <button onclick="importProject()" class="secondary small" style="width: auto;">Import from File</button>
+            </div>
+            <div id="savedProjectsList" style="margin-top: 12px; font-size: 12px; color: #666;"></div>
+        </div>
+
+        <div class="button-group">
+            <button onclick="goToData()" class="primary">Continue to Data Entry</button>
+        </div>
+    </div>
+
+    <script src="js/builder.js"></script>
+</body>
+</html>
